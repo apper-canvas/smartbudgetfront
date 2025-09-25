@@ -86,18 +86,27 @@ class BankAccountService {
     }
   }
 
-  async create(accountData) {
+async create(accountData) {
     try {
       await delay(300);
       
-      // Only include Updateable fields
+      // Sanitize data to prevent circular structure errors
+      // Extract primitive values in case event objects are passed
+      const sanitizeValue = (value) => {
+        if (value && typeof value === 'object' && value.target) {
+          return value.target.value || '';
+        }
+        return value || '';
+      };
+      
+      // Only include Updateable fields with sanitized values
       const params = {
         records: [{
-          Name: accountData.Name || '',
-          Tags: accountData.Tags || '',
-          account_name_c: accountData.account_name_c || '',
-          current_balance_c: parseFloat(accountData.current_balance_c) || 0,
-          account_type_c: accountData.account_type_c || ''
+          Name: String(sanitizeValue(accountData.Name)),
+          Tags: String(sanitizeValue(accountData.Tags)),
+          account_name_c: String(sanitizeValue(accountData.account_name_c)),
+          current_balance_c: parseFloat(sanitizeValue(accountData.current_balance_c)) || 0,
+          account_type_c: String(sanitizeValue(accountData.account_type_c))
         }]
       };
 
