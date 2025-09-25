@@ -9,13 +9,13 @@ import Transactions from "@/components/pages/Transactions";
 import Budget from "@/components/pages/Budget";
 import Goals from "@/components/pages/Goals";
 import Reports from "@/components/pages/Reports";
+import BankAccounts from "@/components/pages/BankAccounts";
 import Login from "@/components/pages/Login";
 import Signup from "@/components/pages/Signup";
 import Callback from "@/components/pages/Callback";
 import ErrorPage from "@/components/pages/ErrorPage";
 import ResetPassword from "@/components/pages/ResetPassword";
 import PromptPassword from "@/components/pages/PromptPassword";
-
 export const AuthContext = createContext(null);
 
 function App() {
@@ -128,11 +128,12 @@ function App() {
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/prompt-password/:appId/:emailAddress/:provider" element={<PromptPassword />} />
         <Route path="/reset-password/:appId/:fields" element={<ResetPassword />} />
-        <Route path="/" element={<Layout />}>
+<Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="budget" element={<Budget />} />
           <Route path="goals" element={<Goals />} />
+          <Route path="bank-accounts" element={<BankAccounts />} />
           <Route path="reports" element={<Reports />} />
         </Route>
       </Routes>

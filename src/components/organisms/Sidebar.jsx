@@ -4,9 +4,10 @@ import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const navItems = [
+const navItems = [
     { path: "/", icon: "LayoutDashboard", label: "Dashboard" },
     { path: "/transactions", icon: "Receipt", label: "Transactions" },
+    { path: "/bank-accounts", icon: "CreditCard", label: "Bank Accounts" },
     { path: "/budget", icon: "Target", label: "Budget" },
     { path: "/goals", icon: "Trophy", label: "Goals" },
     { path: "/reports", icon: "BarChart3", label: "Reports" }
