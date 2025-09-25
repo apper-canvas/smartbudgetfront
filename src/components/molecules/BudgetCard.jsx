@@ -4,8 +4,8 @@ import ProgressBar from "@/components/atoms/ProgressBar";
 import ApperIcon from "@/components/ApperIcon";
 
 const BudgetCard = ({ budget, onEdit }) => {
-  const percentage = budget.limit > 0 ? (budget.spent / budget.limit) * 100 : 0;
-  const remaining = budget.limit - budget.spent;
+const percentage = budget.limit_c > 0 ? (budget.spent_c / budget.limit_c) * 100 : 0;
+  const remaining = budget.limit_c - budget.spent_c;
   const isOverBudget = percentage > 100;
   const isNearLimit = percentage > 80 && percentage <= 100;
 
@@ -52,7 +52,7 @@ const BudgetCard = ({ budget, onEdit }) => {
                 : "bg-gradient-to-r from-success-100 to-success-200"
           }`}>
             <ApperIcon 
-              name={getCategoryIcon(budget.category)} 
+name={getCategoryIcon(budget.category_c?.Name || 'Other')}
               size={20} 
               className={
                 isOverBudget 
@@ -64,9 +64,9 @@ const BudgetCard = ({ budget, onEdit }) => {
             />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{budget.category}</h3>
+<h3 className="font-semibold text-gray-900">{budget.category_c?.Name || 'Uncategorized'}</h3>
             <p className="text-sm text-gray-500">
-              {budget.month} {budget.year}
+{budget.month_c} {budget.year_c}
             </p>
           </div>
         </div>
@@ -82,13 +82,13 @@ const BudgetCard = ({ budget, onEdit }) => {
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">Spent</span>
           <span className="font-medium text-gray-900 font-tabular">
-            {formatCurrency(budget.spent)} of {formatCurrency(budget.limit)}
+{formatCurrency(budget.spent_c)} of {formatCurrency(budget.limit_c)}
           </span>
         </div>
         
         <ProgressBar
-          value={budget.spent}
-          max={budget.limit}
+value={budget.spent_c}
+          max={budget.limit_c}
           variant={getProgressVariant()}
           size="md"
         />
@@ -102,7 +102,7 @@ const BudgetCard = ({ budget, onEdit }) => {
           <span className={`font-medium font-tabular ${
             remaining < 0 ? "text-error-600" : "text-success-600"
           }`}>
-            {remaining < 0 ? "Over by " : "Remaining: "}{formatCurrency(remaining)}
+{remaining < 0 ? "Over by " : "Remaining: "}{formatCurrency(Math.abs(remaining))}
           </span>
         </div>
       </div>

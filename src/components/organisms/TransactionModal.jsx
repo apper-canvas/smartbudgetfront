@@ -25,12 +25,12 @@ const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) =>
 
   useEffect(() => {
     if (transaction) {
-      setFormData({
-        amount: transaction.amount.toString(),
-        type: transaction.type,
-        category: transaction.category,
-        description: transaction.description,
-        date: format(new Date(transaction.date), "yyyy-MM-dd")
+setFormData({
+        amount: transaction.amount_c.toString(),
+        type: transaction.type_c,
+        category: transaction.category_c?.Id || '',
+        description: transaction.description_c,
+        date: format(new Date(transaction.date_c), "yyyy-MM-dd")
       });
     } else {
       setFormData({
@@ -45,7 +45,7 @@ const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) =>
 
   const loadCategories = async () => {
     try {
-      const data = await categoryService.getAll();
+const data = await categoryService.getAll();
       setCategories(data);
     } catch (error) {
       toast.error("Failed to load categories");
@@ -62,10 +62,12 @@ const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) =>
     setLoading(true);
     try {
       const transactionData = {
-        ...formData,
-        amount: parseFloat(formData.amount),
-        date: new Date(formData.date).toISOString(),
-        createdAt: new Date().toISOString()
+amount_c: parseFloat(formData.amount),
+        type_c: formData.type,
+        description_c: formData.description,
+        date_c: new Date(formData.date).toISOString(),
+        created_at_c: new Date().toISOString(),
+        category_c: formData.category ? parseInt(formData.category) : null
       };
 
       if (transaction) {
@@ -90,9 +92,9 @@ const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) =>
   };
 
   const getFilteredCategories = () => {
-    return categories
-      .filter(cat => cat.type === formData.type)
-      .map(cat => ({ value: cat.name, label: cat.name }));
+return categories
+      .filter(cat => cat.type_c === formData.type)
+      .map(cat => ({ value: cat.Id, label: cat.name_c }));
   };
 
   return (

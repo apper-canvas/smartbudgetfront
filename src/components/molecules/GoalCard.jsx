@@ -6,8 +6,8 @@ import ApperIcon from "@/components/ApperIcon";
 import { format, differenceInDays } from "date-fns";
 
 const GoalCard = ({ goal, onEdit, onDelete }) => {
-  const progress = (goal.currentAmount / goal.targetAmount) * 100;
-  const daysRemaining = differenceInDays(new Date(goal.targetDate), new Date());
+const progress = (goal.current_amount_c / goal.target_amount_c) * 100;
+  const daysRemaining = differenceInDays(new Date(goal.target_date_c), new Date());
   const isOverdue = daysRemaining < 0;
   const isCompleted = progress >= 100;
 
@@ -38,11 +38,11 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
     <Card className="p-6 hover:shadow-lg transition-all duration-200">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">{goal.name}</h3>
+<h3 className="text-lg font-semibold text-gray-900 mb-1">{goal.name_c}</h3>
           <div className="flex items-center space-x-2">
             {getStatusBadge()}
             <span className="text-sm text-gray-500">
-              Due {format(new Date(goal.targetDate), "MMM dd, yyyy")}
+Due {format(new Date(goal.target_date_c), "MMM dd, yyyy")}
             </span>
           </div>
         </div>
@@ -66,13 +66,13 @@ const GoalCard = ({ goal, onEdit, onDelete }) => {
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">Progress</span>
           <span className="font-medium text-gray-900">
-            {formatCurrency(goal.currentAmount)} of {formatCurrency(goal.targetAmount)}
+{formatCurrency(goal.current_amount_c)} of {formatCurrency(goal.target_amount_c)}
           </span>
         </div>
         
-        <ProgressBar
-          value={goal.currentAmount}
-          max={goal.targetAmount}
+<ProgressBar
+          value={goal.current_amount_c}
+          max={goal.target_amount_c}
           variant={getProgressVariant()}
           size="lg"
         />

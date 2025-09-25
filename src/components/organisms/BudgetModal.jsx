@@ -29,10 +29,10 @@ const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
   useEffect(() => {
     if (budget) {
       setFormData({
-        category: budget.category,
-        limit: budget.limit.toString(),
-        month: budget.month,
-        year: budget.year
+category: budget.category_c?.Id || '',
+        limit: budget.limit_c.toString(),
+        month: budget.month_c,
+        year: budget.year_c
       });
     } else {
       const currentMonth = months[new Date().getMonth()];
@@ -47,8 +47,8 @@ const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
 
   const loadCategories = async () => {
     try {
-      const data = await categoryService.getAll();
-      setCategories(data.filter(cat => cat.type === "expense"));
+const data = await categoryService.getAll();
+      setCategories(data.filter(cat => cat.type_c === "expense"));
     } catch (error) {
       toast.error("Failed to load categories");
     }
@@ -64,9 +64,11 @@ const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
     setLoading(true);
     try {
       const budgetData = {
-        ...formData,
-        limit: parseFloat(formData.limit),
-        spent: budget?.spent || 0
+category_c: formData.category ? parseInt(formData.category) : null,
+        limit_c: parseFloat(formData.limit),
+        spent_c: budget?.spent_c || 0,
+        month_c: formData.month,
+        year_c: parseInt(formData.year)
       };
 
       if (budget) {
@@ -91,7 +93,7 @@ const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
   };
 
   const getCategoryOptions = () => {
-    return categories.map(cat => ({ value: cat.name, label: cat.name }));
+return categories.map(cat => ({ value: cat.Id, label: cat.name_c }));
   };
 
   const getMonthOptions = () => {

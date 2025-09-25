@@ -1,61 +1,189 @@
-import budgetData from "@/services/mockData/budgets.json";
-
-// Simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { toast } from 'react-toastify';
 
 class BudgetService {
   constructor() {
-    this.budgets = [...budgetData];
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+    this.tableName = 'budget_c';
   }
 
   async getAll() {
-    await delay(300);
-    return [...this.budgets];
+    try {
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "limit_c"}},
+          {"field": {"Name": "spent_c"}},
+          {"field": {"Name": "month_c"}},
+          {"field": {"Name": "year_c"}},
+          {"field": {"Name": "category_c"}}
+        ],
+        orderBy: [{"fieldName": "year_c", "sorttype": "DESC"}, {"fieldName": "month_c", "sorttype": "ASC"}]
+      };
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Error fetching budgets:", response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching budgets:", error?.response?.data?.message || error);
+      return [];
+    }
   }
 
   async getById(id) {
-    await delay(200);
-    const budget = this.budgets.find(b => b.Id === id);
-    if (!budget) {
-      throw new Error("Budget not found");
+    try {
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "limit_c"}},
+          {"field": {"Name": "spent_c"}},
+          {"field": {"Name": "month_c"}},
+          {"field": {"Name": "year_c"}},
+          {"field": {"Name": "category_c"}}
+        ]
+      };
+
+      const response = await this.apperClient.getRecordById(this.tableName, id, params);
+      
+      if (!response.success) {
+        console.error(`Error fetching budget ${id}:`, response.message);
+        return null;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching budget ${id}:`, error?.response?.data?.message || error);
+      return null;
     }
-    return { ...budget };
   }
 
   async create(budgetData) {
-    await delay(400);
-    const maxId = this.budgets.length > 0 ? 
-      Math.max(...this.budgets.map(b => b.Id)) : 0;
-    
-    const newBudget = {
-      Id: maxId + 1,
-      ...budgetData
-    };
-    
-    this.budgets.push(newBudget);
-    return { ...newBudget };
+    try {
+      const params = {
+        records: [{
+          Name: `${budgetData.category_c} - ${budgetData.month_c} ${budgetData.year_c}`,
+          limit_c: parseFloat(budgetData.limit_c),
+          spent_c: parseFloat(budgetData.spent_c || 0),
+          month_c: budgetData.month_c,
+          year_c: parseInt(budgetData.year_c),
+          category_c: budgetData.category_c ? parseInt(budgetData.category_c) : null
+        }]
+      };
+
+      const response = await this.apperClient.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Error creating budget:", response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to create ${failed.length} budget records:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating budget:", error?.response?.data?.message || error);
+      return null;
+    }
   }
 
   async update(id, updateData) {
-    await delay(350);
-    const index = this.budgets.findIndex(b => b.Id === id);
-    if (index === -1) {
-      throw new Error("Budget not found");
+    try {
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: `${updateData.category_c} - ${updateData.month_c} ${updateData.year_c}`,
+          limit_c: parseFloat(updateData.limit_c),
+          spent_c: parseFloat(updateData.spent_c || 0),
+          month_c: updateData.month_c,
+          year_c: parseInt(updateData.year_c),
+          category_c: updateData.category_c ? parseInt(updateData.category_c) : null
+        }]
+      };
+
+      const response = await this.apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Error updating budget:", response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to update ${failed.length} budget records:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successful.length > 0 ? successful[0].data : null;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating budget:", error?.response?.data?.message || error);
+      return null;
     }
-    
-    this.budgets[index] = { ...this.budgets[index], ...updateData };
-    return { ...this.budgets[index] };
   }
 
   async delete(id) {
-    await delay(250);
-    const index = this.budgets.findIndex(b => b.Id === id);
-    if (index === -1) {
-      throw new Error("Budget not found");
+    try {
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await this.apperClient.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error("Error deleting budget:", response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const successful = response.results.filter(r => r.success);
+        const failed = response.results.filter(r => !r.success);
+        
+        if (failed.length > 0) {
+          console.error(`Failed to delete ${failed.length} budget records:`, failed);
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successful.length > 0;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error deleting budget:", error?.response?.data?.message || error);
+      return false;
     }
-    
-    const deleted = this.budgets.splice(index, 1)[0];
-    return { ...deleted };
   }
 }
 

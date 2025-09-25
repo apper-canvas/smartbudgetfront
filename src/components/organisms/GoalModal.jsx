@@ -19,10 +19,10 @@ const GoalModal = ({ isOpen, onClose, goal = null, onSuccess }) => {
   useEffect(() => {
     if (goal) {
       setFormData({
-        name: goal.name,
-        targetAmount: goal.targetAmount.toString(),
-        currentAmount: goal.currentAmount.toString(),
-        targetDate: format(new Date(goal.targetDate), "yyyy-MM-dd")
+name: goal.name_c,
+        targetAmount: goal.target_amount_c.toString(),
+        currentAmount: goal.current_amount_c.toString(),
+        targetDate: format(new Date(goal.target_date_c), "yyyy-MM-dd")
       });
     } else {
       setFormData({
@@ -44,11 +44,11 @@ const GoalModal = ({ isOpen, onClose, goal = null, onSuccess }) => {
     setLoading(true);
     try {
       const goalData = {
-        ...formData,
-        targetAmount: parseFloat(formData.targetAmount),
-        currentAmount: parseFloat(formData.currentAmount || 0),
-        targetDate: new Date(formData.targetDate).toISOString(),
-        createdAt: goal?.createdAt || new Date().toISOString()
+name_c: formData.name,
+        target_amount_c: parseFloat(formData.targetAmount),
+        current_amount_c: parseFloat(formData.currentAmount || 0),
+        target_date_c: new Date(formData.targetDate).toISOString(),
+        created_at_c: goal?.created_at_c || new Date().toISOString()
       };
 
       if (goal) {

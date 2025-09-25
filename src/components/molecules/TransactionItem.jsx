@@ -44,34 +44,34 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-            transaction.type === "income" 
+transaction.type_c === "income" 
               ? "bg-gradient-to-r from-success-100 to-success-200" 
               : "bg-gradient-to-r from-error-100 to-error-200"
           }`}>
             <ApperIcon 
-              name={getCategoryIcon(transaction.category)} 
+              name={getCategoryIcon(transaction.category_c?.Name || 'Other')} 
               size={18} 
-              className={transaction.type === "income" ? "text-success-600" : "text-error-600"}
+              className={transaction.type_c === "income" ? "text-success-600" : "text-error-600"}
             />
           </div>
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-900 truncate">
-            {transaction.description}
+{transaction.description_c}
           </p>
           <div className="flex items-center space-x-2 mt-1">
-            <Badge variant={transaction.type === "income" ? "success" : "default"} size="sm">
-              {transaction.category}
+<Badge variant={transaction.type_c === "income" ? "success" : "default"} size="sm">
+              {transaction.category_c?.Name || 'Uncategorized'}
             </Badge>
             <span className="text-xs text-gray-500">
-              {format(new Date(transaction.date), "MMM dd, yyyy")}
+{format(new Date(transaction.date_c), "MMM dd, yyyy")}
             </span>
           </div>
         </div>
       </div>
       <div className="flex items-center space-x-3">
-        <span className={`text-lg font-bold font-tabular ${getAmountColor(transaction.type)}`}>
-          {formatAmount(transaction.amount, transaction.type)}
+<span className={`text-lg font-bold font-tabular ${getAmountColor(transaction.type_c)}`}>
+          {formatAmount(transaction.amount_c, transaction.type_c)}
         </span>
         <div className="flex items-center space-x-1">
           <button
