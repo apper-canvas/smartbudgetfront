@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Button from "@/components/atoms/Button";
-import FormField from "@/components/molecules/FormField";
-import ApperIcon from "@/components/ApperIcon";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import CategorySelect from "@/components/molecules/CategorySelect";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { transactionService } from "@/services/api/transactionService";
 import { categoryService } from "@/services/api/categoryService";
-
+import ApperIcon from "@/components/ApperIcon";
+import FormField from "@/components/molecules/FormField";
+import Button from "@/components/atoms/Button";
 const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) => {
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     amount: "",
@@ -43,14 +42,6 @@ setFormData({
     }
   }, [transaction, isOpen]);
 
-  const loadCategories = async () => {
-    try {
-const data = await categoryService.getAll();
-      setCategories(data);
-    } catch (error) {
-      toast.error("Failed to load categories");
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,14 +78,8 @@ amount_c: parseFloat(formData.amount),
     }
   };
 
-  const handleChange = (field, value) => {
+const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const getFilteredCategories = () => {
-return categories
-      .filter(cat => cat.type_c === formData.type)
-      .map(cat => ({ value: cat.Id, label: cat.name_c }));
   };
 
   return (
@@ -160,11 +145,11 @@ return categories
                 </div>
 
                 <FormField
-                  type="select"
+<CategorySelect
                   label="Category"
                   value={formData.category}
                   onChange={(e) => handleChange("category", e.target.value)}
-                  options={getFilteredCategories()}
+                  type={formData.type}
                   placeholder="Select a category"
                   required
                 />

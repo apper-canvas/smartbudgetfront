@@ -7,6 +7,9 @@ const Select = forwardRef(({
   options = [],
   placeholder = "Select an option",
   className,
+  allowCustom = false,
+  customOptionLabel = "Add Custom...",
+  onCustomSelect,
   ...props 
 }, ref) => {
   return (
@@ -32,12 +35,17 @@ const Select = forwardRef(({
           <option value="" disabled>
             {placeholder}
           </option>
-        )}
+)}
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
+        {allowCustom && (
+          <option value="__ADD_CUSTOM__" className="font-medium text-primary-600">
+            {customOptionLabel}
+          </option>
+        )}
       </select>
       {error && (
         <p className="mt-1.5 text-sm text-error-600">{error}</p>

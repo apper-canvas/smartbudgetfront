@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@/components/atoms/Button";
 import FormField from "@/components/molecules/FormField";
+import CategorySelect from "@/components/molecules/CategorySelect";
 import ApperIcon from "@/components/ApperIcon";
 import { toast } from "react-toastify";
 import { budgetService } from "@/services/api/budgetService";
 import { categoryService } from "@/services/api/categoryService";
 
 const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     category: "",
@@ -22,9 +22,6 @@ const BudgetModal = ({ isOpen, onClose, budget = null, onSuccess }) => {
     "July", "August", "September", "October", "November", "December"
   ];
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
 
   useEffect(() => {
     if (budget) {
@@ -45,14 +42,6 @@ category: budget.category_c?.Id || '',
     }
   }, [budget, isOpen]);
 
-  const loadCategories = async () => {
-    try {
-const data = await categoryService.getAll();
-      setCategories(data.filter(cat => cat.type_c === "expense"));
-    } catch (error) {
-      toast.error("Failed to load categories");
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,9 +81,6 @@ category_c: formData.category ? parseInt(formData.category) : null,
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const getCategoryOptions = () => {
-return categories.map(cat => ({ value: cat.Id, label: cat.name_c }));
-  };
 
   const getMonthOptions = () => {
     return months.map(month => ({ value: month, label: month }));
@@ -142,12 +128,11 @@ return categories.map(cat => ({ value: cat.Id, label: cat.name_c }));
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <FormField
-                  type="select"
+<CategorySelect
                   label="Category"
                   value={formData.category}
                   onChange={(e) => handleChange("category", e.target.value)}
-                  options={getCategoryOptions()}
+                  type="expense"
                   placeholder="Select a category"
                   required
                 />
