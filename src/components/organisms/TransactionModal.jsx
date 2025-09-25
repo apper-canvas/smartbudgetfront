@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import CategorySelect from "@/components/molecules/CategorySelect";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { transactionService } from "@/services/api/transactionService";
 import { categoryService } from "@/services/api/categoryService";
 import ApperIcon from "@/components/ApperIcon";
 import FormField from "@/components/molecules/FormField";
+import CategorySelect from "@/components/molecules/CategorySelect";
 import Button from "@/components/atoms/Button";
 const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -17,11 +17,6 @@ const TransactionModal = ({ isOpen, onClose, transaction = null, onSuccess }) =>
     description: "",
     date: format(new Date(), "yyyy-MM-dd")
   });
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
   useEffect(() => {
     if (transaction) {
 setFormData({
@@ -144,7 +139,6 @@ const handleChange = (field, value) => {
                   />
                 </div>
 
-                <FormField
 <CategorySelect
                   label="Category"
                   value={formData.category}
